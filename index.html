@@ -356,6 +356,18 @@
         align-items: flex-start;
         gap: 10px;
       }
+      
+      /* 修复移动端删除按钮显示问题 */
+      .favorite-item {
+        position: relative;
+      }
+      
+      .delete-btn {
+        width: auto;
+        margin-left: 10px;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
     }
   </style>
 </head>
@@ -414,10 +426,10 @@
           <h3>收藏列表</h3>
           <div class="favorites-toggle">
             <span class="favorites-count" id="favoritesCount">0 条</span>
-            <button class="btn-toggle" onclick="toggleFavorites()" id="toggleBtn">展开</button>
+            <button class="btn-toggle" onclick="toggleFavorites()" id="toggleBtn">收起</button>
           </div>
         </div>
-        <div class="favorites-content" id="favoritesContent">
+        <div class="favorites-content show" id="favoritesContent">
           <div class="favorites-list" id="favoritesList">
             <div class="empty-favorites">暂无收藏</div>
           </div>
@@ -447,7 +459,7 @@
     }
 
     let favorites = [];
-    let favoritesVisible = false;
+    let favoritesVisible = true;
 
     // 自动转换
     inputBox.addEventListener('input', () => {
