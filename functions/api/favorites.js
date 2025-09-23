@@ -1,5 +1,6 @@
 export async function onRequest(context) {
     const { request, env } = context;
+    console.log("KV binding:", env.CONVERT_PINYIN_FAVORITES_KV);
     const url = new URL(request.url);
     const userId = url.searchParams.get("id");
 
