@@ -517,10 +517,22 @@
 
     async function getFavorites() {
       if (!userId) return;
-      const res = await fetch(`/api/favorites?id=${userId}`);
-      favorites = await res.json();
-      renderFavorites();
-      updateFavoritesCount();
+      try {
+        const res = await fetch(`/api/favorites?id=${userId}`);
+        if (!res.ok) {
+          console.error(`API error: ${res.status}`);
+          if (res.status === 404) {
+            showToast("无法连接到收藏服务，请稍后再试");
+          }
+          return;
+        }
+        favorites = await res.json();
+        renderFavorites();
+        updateFavoritesCount();
+      } catch (error) {
+        console.error("Error fetching favorites:", error);
+        showToast("获取收藏失败，请稍后再试");
+      }
     }
 
     async function addToFavorites() {
