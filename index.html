@@ -603,12 +603,18 @@
         favoritesListBox.innerHTML = '<div class="empty-favorites">暂无收藏</div>';
         return;
       }
-      favoritesListBox.innerHTML = favorites.map((text, index) => `
+      favoritesListBox.innerHTML = favorites.map((text, index) => {
+        const escapedText = text
+          .replace(/'/g, "\\'")
+          .replace(/\n/g, "\\n")
+          .replace(/\r/g, "\\r");
+        return `
         <div class="favorite-item">
-          <div class="favorite-text" onclick="loadFavorite('${text.replace(/'/g, "\\'")}')">${text}</div>
-          <button class="delete-btn" onclick="removeFromFavorites('${text.replace(/'/g, "\\'")}')">删除</button>
+          <div class="favorite-text" onclick="loadFavorite('${escapedText}')">${text}</div>
+          <button class="delete-btn" onclick="removeFromFavorites('${escapedText}')">删除</button>
         </div>
-      `).join('');
+      `;
+      }).join('');
     }
 
     function showToast(msg) {
