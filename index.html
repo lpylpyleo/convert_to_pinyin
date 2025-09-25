@@ -5,6 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#ffffff">
   <title>中文转拼音小工具</title>
   <script src="https://unpkg.com/pinyin-pro"></script>
   <style>
@@ -23,6 +25,8 @@
       color: #333;
       -webkit-text-size-adjust: 100%;
       touch-action: manipulation;
+      -webkit-overflow-scrolling: touch;
+      will-change: scroll-position;
     }
 
     .container {
@@ -30,6 +34,8 @@
       margin: 0 auto;
       background: white;
       min-height: 100vh;
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
 
     .header {
@@ -41,6 +47,8 @@
       top: 0;
       z-index: 100;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transform: translateZ(0);
+      will-change: transform;
     }
 
     .header h1 {
@@ -80,7 +88,9 @@
       border-radius: 8px;
       resize: none;
       font-family: inherit;
+      appearance: none;
       -webkit-appearance: none;
+      -moz-appearance: none;
     }
 
     textarea:focus {
@@ -143,6 +153,8 @@
       color: #333;
       font-family: inherit;
       transition: all 0.2s;
+      appearance: none;
+      -moz-appearance: none;
       -webkit-appearance: none;
       touch-action: manipulation;
     }
@@ -638,28 +650,42 @@
         return;
       }
       
-      favoritesListBox.innerHTML = favorites.map((text) => {
-        // 使用 data 属性存储文本，避免转义问题
-        return `
-        <div class="favorite-item" data-text="${encodeURIComponent(text)}">
-          <div class="favorite-text">${escapeHtml(text)}</div>
-          <button class="delete-btn">删除</button>
-        </div>
-      `;
-      }).join('');
+      // 创建文档片段，减少DOM重绘
+      const fragment = document.createDocumentFragment();
       
-      // 添加事件监听
-      favoritesListBox.querySelectorAll('.favorite-item').forEach(item => {
-        const text = decodeURIComponent(item.dataset.text);
-        const textEl = item.querySelector('.favorite-text');
-        const deleteBtn = item.querySelector('.delete-btn');
+      // 清空当前列表
+      while (favoritesListBox.firstChild) {
+        favoritesListBox.removeChild(favoritesListBox.firstChild);
+      }
+      
+      // 只渲染可见部分，最多显示50条
+      const maxItems = Math.min(favorites.length, 50);
+      
+      for (let i = 0; i < maxItems; i++) {
+        const text = favorites[i];
+        const item = document.createElement('div');
+        item.className = 'favorite-item';
+        item.dataset.text = encodeURIComponent(text);
         
+        const textEl = document.createElement('div');
+        textEl.className = 'favorite-text';
+        textEl.textContent = text;
         textEl.addEventListener('click', () => loadFavorite(text));
+        
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.textContent = '删除';
         deleteBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           removeFromFavorites(text);
         });
-      });
+        
+        item.appendChild(textEl);
+        item.appendChild(deleteBtn);
+        fragment.appendChild(item);
+      }
+      
+      favoritesListBox.appendChild(fragment);
     }
 
     function escapeHtml(text) {
