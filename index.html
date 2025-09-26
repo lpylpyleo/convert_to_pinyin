@@ -6,53 +6,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#1a1a2e">
+  <meta name="theme-color" content="#0a0e27">
   <title>中文转拼音小工具</title>
   <script src="https://unpkg.com/pinyin-pro"></script>
   <style>
     :root {
-      --bg-primary: #f0f2f5;
-      --bg-secondary: #ffffff;
-      --bg-tertiary: #f8f9fa;
-      --bg-accent: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      --text-primary: #1a1a2e;
+      --primary: #00d4ff;
+      --primary-dark: #0099cc;
+      --secondary: #ff00ff;
+      --accent: #00ff88;
+      --bg-main: #0a0e27;
+      --bg-card: rgba(255, 255, 255, 0.95);
+      --bg-input: rgba(255, 255, 255, 0.9);
+      --text-primary: #0a0e27;
       --text-secondary: #4a5568;
-      --text-tertiary: #718096;
-      --border-color: #e2e8f0;
-      --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-      --shadow-glow: 0 0 20px rgba(102, 126, 234, 0.3);
-      --primary-color: #667eea;
-      --primary-hover: #5a67d8;
-      --danger-color: #e53e3e;
-      --danger-hover: #c53030;
-      --success-color: #48bb78;
-      --warning-color: #ed8936;
-      --glass-bg: rgba(255, 255, 255, 0.9);
-      --glass-border: rgba(255, 255, 255, 0.2);
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --border: rgba(0, 212, 255, 0.2);
+      --shadow: rgba(0, 212, 255, 0.15);
+      --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --glow: 0 0 20px rgba(0, 212, 255, 0.5);
     }
 
     [data-theme="dark"] {
-      --bg-primary: #0f0f23;
-      --bg-secondary: #1a1a2e;
-      --bg-tertiary: #16213e;
-      --bg-accent: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      --text-primary: #edf2f7;
-      --text-secondary: #cbd5e0;
-      --text-tertiary: #a0aec0;
-      --border-color: #2d3748;
-      --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-      --shadow-glow: 0 0 30px rgba(240, 147, 251, 0.4);
-      --primary-color: #f093fb;
-      --primary-hover: #e879f9;
-      --danger-color: #fc5c65;
-      --danger-hover: #eb3b5a;
-      --glass-bg: rgba(26, 26, 46, 0.9);
-      --glass-border: rgba(255, 255, 255, 0.1);
+      --bg-main: #0a0e27;
+      --bg-card: rgba(16, 20, 40, 0.95);
+      --bg-input: rgba(30, 35, 55, 0.95);
+      --text-primary: #e0e6ed;
+      --text-secondary: #a0aec0;
+      --border: rgba(0, 212, 255, 0.3);
+      --shadow: rgba(0, 212, 255, 0.25);
     }
 
     * {
@@ -66,160 +47,153 @@
       margin: 0;
       padding: 0;
       min-height: 100vh;
-      background: var(--bg-primary);
+      background: var(--bg-main);
       color: var(--text-primary);
       -webkit-text-size-adjust: 100%;
       touch-action: manipulation;
       -webkit-overflow-scrolling: touch;
       will-change: scroll-position;
-      transition: var(--transition);
       position: relative;
       overflow-x: hidden;
     }
 
-    /* 背景装饰 */
+    /* 科技感背景 */
     body::before {
-      content: '';
+      content: "";
       position: fixed;
-      top: -50%;
-      right: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
-      opacity: 0.05;
-      animation: rotate 30s linear infinite;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(ellipse at top left, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom right, rgba(255, 0, 255, 0.1) 0%, transparent 50%),
+        linear-gradient(180deg, transparent 0%, rgba(0, 212, 255, 0.05) 100%);
       pointer-events: none;
       z-index: 0;
     }
 
-    @keyframes rotate {
-      to { transform: rotate(360deg); }
+    /* 网格背景 */
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        linear-gradient(rgba(0, 212, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 212, 255, 0.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: 0;
+      animation: grid-move 20s linear infinite;
+    }
+
+    @keyframes grid-move {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(50px, 50px); }
     }
 
     .container {
       max-width: 800px;
       margin: 0 auto;
-      background: var(--glass-bg);
+      background: var(--bg-card);
       min-height: 100vh;
       transform: translateZ(0);
       backface-visibility: hidden;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
       position: relative;
       z-index: 1;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
 
     .header {
-      background: var(--bg-accent);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
       color: white;
       padding: 20px;
       text-align: center;
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: var(--shadow-md);
+      box-shadow: 0 4px 20px var(--shadow);
       transform: translateZ(0);
       will-change: transform;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-
-    .header-content {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      max-width: 100%;
+      gap: 16px;
     }
 
     .header h1 {
       margin: 0;
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 600;
-      letter-spacing: 0.5px;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      flex: 1;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      background: linear-gradient(45deg, #fff, rgba(255, 255, 255, 0.8));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glow-text 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow-text {
+      from { filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5)); }
+      to { filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8)); }
     }
 
     /* 主题切换按钮 */
     .theme-toggle {
-      position: relative;
-      width: 60px;
-      height: 30px;
+      position: absolute;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      border: none;
       background: rgba(255, 255, 255, 0.2);
-      border-radius: 20px;
+      border-radius: 50%;
       cursor: pointer;
-      transition: var(--transition);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      backdrop-filter: blur(10px);
     }
 
     .theme-toggle:hover {
       background: rgba(255, 255, 255, 0.3);
+      transform: rotate(180deg);
     }
 
-    .theme-toggle-slider {
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 22px;
-      height: 22px;
-      background: white;
-      border-radius: 50%;
-      transition: transform 0.3s ease;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-
-    .theme-toggle-slider::before {
-      content: '☀️';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 12px;
-    }
-
-    [data-theme="dark"] .theme-toggle-slider {
-      transform: translateX(28px);
-    }
-
-    [data-theme="dark"] .theme-toggle-slider::before {
-      content: '🌙';
+    .theme-toggle svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
     }
 
     .content {
-      padding: 24px 20px;
+      padding: 24px;
     }
 
     .input-section {
       margin-bottom: 24px;
-      animation: slideIn 0.5s ease-out;
-    }
-
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      position: relative;
     }
 
     .input-label {
       display: block;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       font-weight: 600;
-      color: var(--text-secondary);
+      color: var(--text-primary);
       font-size: 16px;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.5px;
     }
 
     .char-count {
       float: right;
       font-size: 14px;
-      color: var(--text-tertiary);
-      font-weight: 400;
+      color: var(--primary);
+      font-weight: 500;
     }
 
     textarea {
@@ -227,34 +201,34 @@
       height: 140px;
       font-size: 16px;
       padding: 16px;
-      border: 2px solid var(--border-color);
+      border: 2px solid var(--border);
       border-radius: 12px;
       resize: none;
       font-family: inherit;
       appearance: none;
       -webkit-appearance: none;
       -moz-appearance: none;
-      background: var(--bg-secondary);
+      background: var(--bg-input);
       color: var(--text-primary);
-      transition: var(--transition);
-      box-shadow: var(--shadow-sm);
+      transition: all 0.3s;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     }
 
     textarea:focus {
       outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1), var(--shadow-glow);
+      border-color: var(--primary);
+      box-shadow: var(--glow);
+      transform: translateY(-2px);
     }
 
     .options {
       margin: 20px 0;
       padding: 20px;
-      background: var(--bg-tertiary);
+      background: var(--bg-input);
       border-radius: 12px;
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow-sm);
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     }
 
     .options-row {
@@ -272,12 +246,12 @@
 
     .option-group > label:first-child {
       font-weight: 600;
-      color: var(--text-secondary);
+      color: var(--primary);
     }
 
     .option-group label {
       font-size: 15px;
-      color: var(--text-secondary);
+      color: var(--text-primary);
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -286,16 +260,16 @@
     }
 
     .option-group label:hover {
-      color: var(--primary-color);
+      color: var(--primary);
     }
 
     input[type="checkbox"],
     input[type="radio"] {
       margin: 0;
       cursor: pointer;
-      width: 18px;
-      height: 18px;
-      accent-color: var(--primary-color);
+      width: 20px;
+      height: 20px;
+      accent-color: var(--primary);
     }
 
     .controls {
@@ -309,31 +283,31 @@
       padding: 14px 20px;
       font-size: 15px;
       cursor: pointer;
-      border: none;
+      border: 2px solid transparent;
       border-radius: 10px;
-      background: var(--bg-secondary);
+      background: var(--bg-input);
       color: var(--text-primary);
       font-family: inherit;
-      font-weight: 500;
-      transition: var(--transition);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: all 0.3s;
       appearance: none;
       -moz-appearance: none;
       -webkit-appearance: none;
       touch-action: manipulation;
-      box-shadow: var(--shadow-sm);
       position: relative;
       overflow: hidden;
     }
 
     button::before {
-      content: '';
+      content: "";
       position: absolute;
       top: 50%;
       left: 50%;
       width: 0;
       height: 0;
-      background: rgba(255, 255, 255, 0.2);
       border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
       transform: translate(-50%, -50%);
       transition: width 0.6s, height 0.6s;
     }
@@ -349,32 +323,33 @@
 
     button:hover {
       transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
     }
 
     .btn-primary {
-      background: var(--primary-color);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
       color: white;
+      border: none;
       grid-column: span 2;
+      box-shadow: 0 4px 15px var(--shadow);
     }
 
     .btn-primary:hover {
-      background: var(--primary-hover);
-      box-shadow: var(--shadow-glow);
+      box-shadow: var(--glow);
     }
 
     .btn-favorite {
-      background: var(--danger-color);
+      background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
       color: white;
+      border: none;
     }
 
     .btn-favorite:hover {
-      background: var(--danger-hover);
+      box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
     }
 
     .output-section {
       margin: 32px 0;
-      animation: slideIn 0.6s ease-out 0.1s both;
     }
 
     .output-section h3 {
@@ -382,36 +357,65 @@
       color: var(--text-primary);
       font-weight: 600;
       font-size: 18px;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .output-section h3::before {
+      content: "";
+      width: 4px;
+      height: 20px;
+      background: var(--primary);
+      border-radius: 2px;
     }
 
     #output {
       padding: 20px;
-      border: 2px solid var(--border-color);
+      border: 2px solid var(--border);
       border-radius: 12px;
       min-height: 100px;
-      background: var(--bg-secondary);
+      background: var(--bg-input);
+      color: var(--text-primary);
       white-space: pre-wrap;
       font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
       line-height: 1.6;
       word-break: break-all;
       font-size: 15px;
-      color: var(--text-primary);
-      transition: var(--transition);
-      box-shadow: var(--shadow-sm);
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
     }
 
     #output.has-content {
-      background: var(--bg-secondary);
-      border-color: var(--primary-color);
-      box-shadow: var(--shadow-glow);
+      border-color: var(--primary);
+      box-shadow: 0 4px 20px var(--shadow);
+    }
+
+    #output.has-content::before {
+      content: "";
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
+      border-radius: 12px;
+      opacity: 0.3;
+      z-index: -1;
+      animation: gradient-border 3s linear infinite;
+    }
+
+    @keyframes gradient-border {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     .favorites-section {
       margin-top: 40px;
-      border-top: 2px solid var(--border-color);
       padding-top: 32px;
-      animation: slideIn 0.7s ease-out 0.2s both;
+      border-top: 2px solid var(--border);
     }
 
     .favorites-header {
@@ -426,55 +430,48 @@
       color: var(--text-primary);
       font-weight: 600;
       font-size: 18px;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .favorites-header h3::before {
+      content: "";
+      width: 4px;
+      height: 20px;
+      background: var(--secondary);
+      border-radius: 2px;
     }
 
     .favorites-count {
       font-size: 14px;
-      color: var(--text-tertiary);
-      background: var(--bg-tertiary);
+      color: white;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
       padding: 6px 16px;
       border-radius: 20px;
-      font-weight: 500;
-      box-shadow: var(--shadow-sm);
+      font-weight: 600;
+      box-shadow: 0 2px 10px var(--shadow);
     }
 
     .favorite-item {
       padding: 18px;
-      border: 2px solid var(--border-color);
+      border: 2px solid var(--border);
       border-radius: 12px;
       margin-bottom: 12px;
-      background: var(--bg-secondary);
+      background: var(--bg-input);
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 16px;
-      transition: var(--transition);
+      transition: all 0.3s;
       cursor: pointer;
-      position: relative;
-      overflow: hidden;
     }
 
     .favorite-item:hover {
-      transform: translateX(8px);
-      border-color: var(--primary-color);
-      box-shadow: var(--shadow-md);
-    }
-
-    .favorite-item::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 4px;
-      background: var(--primary-color);
-      transform: scaleY(0);
-      transition: transform 0.3s;
-    }
-
-    .favorite-item:hover::before {
-      transform: scaleY(1);
+      border-color: var(--primary);
+      transform: translateX(4px);
+      box-shadow: 0 4px 20px var(--shadow);
     }
 
     .favorite-text {
@@ -488,19 +485,18 @@
     .delete-btn {
       padding: 8px 16px;
       font-size: 14px;
-      background: var(--danger-color);
+      background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       flex-shrink: 0;
-      transition: var(--transition);
-      font-weight: 500;
+      transition: all 0.3s;
+      font-weight: 600;
     }
 
     .delete-btn:hover {
-      background: var(--danger-hover);
-      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
     }
 
     .delete-btn:active {
@@ -510,12 +506,12 @@
     .empty-favorites {
       padding: 60px 20px;
       text-align: center;
-      color: var(--text-tertiary);
+      color: var(--text-secondary);
       font-size: 15px;
-      background: var(--bg-tertiary);
+      background: var(--bg-input);
       border-radius: 12px;
       margin: 20px 0;
-      border: 2px dashed var(--border-color);
+      border: 2px dashed var(--border);
     }
 
     #toast {
@@ -523,18 +519,19 @@
       bottom: 80px;
       left: 50%;
       transform: translateX(-50%);
-      background: var(--bg-accent);
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.95) 0%, rgba(0, 153, 204, 0.95) 100%);
       color: #fff;
       padding: 14px 28px;
-      border-radius: 30px;
+      border-radius: 28px;
       opacity: 0;
       pointer-events: none;
       transition: all 0.3s ease;
       font-size: 15px;
+      font-weight: 600;
       z-index: 1000;
       white-space: nowrap;
-      box-shadow: var(--shadow-lg);
-      font-weight: 500;
+      box-shadow: 0 4px 20px rgba(0, 212, 255, 0.4);
+      backdrop-filter: blur(10px);
     }
 
     #toast.show {
@@ -544,17 +541,55 @@
 
     .shortcut-hint {
       font-size: 13px;
-      color: var(--text-tertiary);
+      color: var(--text-secondary);
       margin-top: 8px;
+      font-style: italic;
+    }
+
+    /* 浮动粒子效果 */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--primary);
+      border-radius: 50%;
+      opacity: 0.5;
+      animation: float 20s infinite;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(100vh) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.5;
+      }
+      90% {
+        opacity: 0.5;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(100px);
+      }
     }
 
     @media (min-width: 769px) {
       .container {
         margin: 20px auto;
         border-radius: 16px;
-        box-shadow: var(--shadow-lg);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
         min-height: auto;
-        border: 1px solid var(--glass-border);
+        border: 1px solid var(--border);
       }
 
       .header {
@@ -563,7 +598,7 @@
       }
 
       .header h1 {
-        font-size: 28px;
+        font-size: 26px;
       }
 
       .content {
@@ -587,31 +622,30 @@
     }
 
     /* 加载动画 */
-    .loading {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      border-top-color: white;
-      animation: spin 1s ease-in-out infinite;
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .loading {
+      animation: pulse 1.5s infinite;
     }
   </style>
 </head>
 
 <body>
+  <!-- 粒子背景 -->
+  <div class="particles" id="particles"></div>
+  
   <div class="container">
     <div class="header">
-      <div class="header-content">
-        <h1>中文转拼音工具</h1>
-        <div class="theme-toggle" onclick="toggleTheme()">
-          <div class="theme-toggle-slider"></div>
-        </div>
-      </div>
+      <h1>中文转拼音工具</h1>
+      <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">
+        <svg id="theme-icon" viewBox="0 0 24 24">
+          <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+        </svg>
+      </button>
     </div>
 
     <div class="content">
@@ -652,7 +686,7 @@
       </div>
 
       <div class="output-section">
-        <h3>拼音结果：</h3>
+        <h3>拼音结果</h3>
         <div id="output">请在上方输入中文文本</div>
       </div>
 
@@ -687,24 +721,45 @@
     let favorites = [];
     let debounceTimer;
 
-    // 主题切换功能
+    // 初始化主题
     function initTheme() {
       const savedTheme = localStorage.getItem('theme') || 'light';
       document.documentElement.setAttribute('data-theme', savedTheme);
-      updateMetaThemeColor(savedTheme);
+      updateThemeIcon(savedTheme);
     }
 
+    // 切换主题
     function toggleTheme() {
       const currentTheme = document.documentElement.getAttribute('data-theme');
       const newTheme = currentTheme === 'light' ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', newTheme);
       localStorage.setItem('theme', newTheme);
-      updateMetaThemeColor(newTheme);
+      updateThemeIcon(newTheme);
     }
 
-    function updateMetaThemeColor(theme) {
-      const metaThemeColor = document.querySelector("meta[name=theme-color]");
-      metaThemeColor.setAttribute("content", theme === 'light' ? "#667eea" : "#1a1a2e");
+    // 更新主题图标
+    function updateThemeIcon(theme) {
+      const icon = document.getElementById('theme-icon');
+      if (theme === 'dark') {
+        icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+      } else {
+        icon.innerHTML = '<path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>';
+      }
+    }
+
+    // 创建粒子效果
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 20;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 20 + 's';
+        particle.style.animationDuration = (20 + Math.random() * 10) + 's';
+        particlesContainer.appendChild(particle);
+      }
     }
 
     // 防抖转换
@@ -879,7 +934,7 @@
     }
 
     function renderEmptyFavorites() {
-      favoritesListBox.innerHTML = '<div class="empty-favorites">暂无收藏</div>';
+      favoritesListBox.innerHTML = '<div class="empty-favorites">暂无收藏内容</div>';
     }
 
     function renderFavorites() {
@@ -908,7 +963,7 @@
         const textEl = document.createElement('div');
         textEl.className = 'favorite-text';
         textEl.textContent = text;
-        textEl.addEventListener('click', () => loadFavorite(text));
+        item.addEventListener('click', () => loadFavorite(text));
         
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-btn';
@@ -943,6 +998,7 @@
 
     // 初始化
     initTheme();
+    createParticles();
     updateCharCount();
     getFavorites();
     
