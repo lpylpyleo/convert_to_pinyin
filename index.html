@@ -11,7 +11,7 @@
   <script src="https://unpkg.com/pinyin-pro"></script>
   <style>
     :root {
-      --primary: #00d4ff;
+      --primary: #3c5fe1;
       --primary-dark: #0099cc;
       --secondary: #ff00ff;
       --accent: #00ff88;
@@ -22,7 +22,7 @@
       --text-secondary: #4a5568;
       --border: rgba(0, 212, 255, 0.2);
       --shadow: rgba(0, 212, 255, 0.15);
-      --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --gradient: linear-gradient(135deg, #667eea 0%, #4b5fa2 100%);
       --glow: 0 0 20px rgba(0, 212, 255, 0.5);
     }
 
@@ -165,10 +165,9 @@
       transform: rotate(180deg);
     }
 
-    .theme-toggle svg {
-      width: 20px;
-      height: 20px;
-      fill: white;
+    .theme-emoji {
+      font-size: 20px;
+      line-height: 1;
     }
 
     .content {
@@ -208,10 +207,14 @@
       appearance: none;
       -webkit-appearance: none;
       -moz-appearance: none;
-      background: var(--bg-input);
+      background: var(--bg-card);
       color: var(--text-primary);
       transition: all 0.3s;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    [data-theme="light"] textarea {
+      background: rgba(255, 255, 255, 0.9);
     }
 
     textarea:focus {
@@ -224,11 +227,15 @@
     .options {
       margin: 20px 0;
       padding: 20px;
-      background: var(--bg-input);
+      background: var(--bg-card);
       border-radius: 12px;
       border: 1px solid var(--border);
       backdrop-filter: blur(10px);
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    [data-theme="light"] .options {
+      background: rgba(255, 255, 255, 0.9);
     }
 
     .options-row {
@@ -642,9 +649,7 @@
     <div class="header">
       <h1>中文转拼音工具</h1>
       <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">
-        <svg id="theme-icon" viewBox="0 0 24 24">
-          <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
-        </svg>
+        <span id="theme-icon" class="theme-emoji">🌞</span>
       </button>
     </div>
 
@@ -723,9 +728,30 @@
 
     // 初始化主题
     function initTheme() {
-      const savedTheme = localStorage.getItem('theme') || 'light';
-      document.documentElement.setAttribute('data-theme', savedTheme);
-      updateThemeIcon(savedTheme);
+      // 检查是否有用户保存的主题偏好
+      const savedTheme = localStorage.getItem('theme');
+      
+      if (savedTheme) {
+        // 如果有保存的偏好，使用保存的主题
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+      } else {
+        // 如果没有保存的偏好，使用系统主题
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const systemTheme = prefersDark ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', systemTheme);
+        updateThemeIcon(systemTheme);
+      }
+      
+      // 监听系统主题变化
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        // 只有当用户没有设置偏好时才跟随系统变化
+        if (!localStorage.getItem('theme')) {
+          const newTheme = e.matches ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', newTheme);
+          updateThemeIcon(newTheme);
+        }
+      });
     }
 
     // 切换主题
@@ -741,9 +767,9 @@
     function updateThemeIcon(theme) {
       const icon = document.getElementById('theme-icon');
       if (theme === 'dark') {
-        icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+        icon.textContent = '🌙'; // 月亮emoji表示暗色主题
       } else {
-        icon.innerHTML = '<path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>';
+        icon.textContent = '🌞'; // 太阳emoji表示亮色主题
       }
     }
 
