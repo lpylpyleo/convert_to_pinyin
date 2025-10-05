@@ -1,43 +1,165 @@
-# Svelte + Vite
+# 中文转拼音工具 🇨🇳
 
-This template should help get you started developing with Svelte in Vite.
+一个简洁优雅的在线中文转拼音工具，支持多种拼音格式转换和收藏功能。
 
-## Recommended IDE Setup
+![中文转拼音工具](public/vite.svg)
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+## ✨ 功能特点
 
-## Need an official Svelte framework?
+- 🔤 **多种拼音格式**
+  - 带声调符号（默认）：nǐ hǎo
+  - 带数字声调：ni3 hao3
+  - 不带声调：ni hao
+  - 首字母模式：n h
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+- 💾 **收藏功能**
+  - 支持收藏常用文本
+  - 通过URL参数 `?id=你的密钥` 启用
+  - 云端存储，随时访问
 
-## Technical considerations
+- 🎨 **界面特性**
+  - 响应式设计，支持移动端
+  - 深色模式支持
+  - 实时字数统计
+  - 一键复制结果
 
-**Why use this over SvelteKit?**
+- ⚡ **性能优化**
+  - 防抖输入处理
+  - 流畅的动画效果
+  - 快速转换响应
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
+## 🚀 在线使用
 
-This template contains as little as possible to get started with Vite + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
+访问部署地址即可直接使用，无需安装。
 
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
+### 基础使用
 
-**Why include `.vscode/extensions.json`?**
+1. 在输入框中输入或粘贴中文文本
+2. 选择所需的拼音格式
+3. 查看转换结果
+4. 点击"复制结果"按钮复制拼音
 
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
+### 收藏功能
 
-**Why enable `checkJs` in the JS template?**
-
-It is likely that most cases of changing variable types in runtime are likely to be accidental, rather than deliberate. This provides advanced typechecking out of the box. Should you like to take advantage of the dynamically-typed nature of JavaScript, it is trivial to change the configuration.
-
-**Why is HMR not preserving my local component state?**
-
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/sveltejs/svelte-hmr/tree/master/packages/svelte-hmr#preservation-of-local-state).
-
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
-
-```js
-// store.js
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
+添加 URL 参数来启用收藏功能：
 ```
+https://你的域名/?id=你的密钥
+```
+
+密钥可以是任意字符串，用于标识你的收藏列表。
+
+## 🛠️ 本地开发
+
+### 环境要求
+
+- Node.js 16+
+- npm 或 yarn
+
+### 安装依赖
+
+```bash
+npm install
+```
+
+### 启动开发服务器
+
+```bash
+npm run dev
+```
+
+### 构建生产版本
+
+```bash
+npm run build
+```
+
+### 预览构建结果
+
+```bash
+npm run preview
+```
+
+## 📦 技术栈
+
+- **前端框架**: Svelte
+- **构建工具**: Vite
+- **拼音转换**: pinyin-pro
+- **部署平台**: Cloudflare Workers
+- **样式**: 原生 CSS with CSS Variables
+
+## 🌐 部署
+
+### Cloudflare Workers 部署
+
+1. 安装 Wrangler CLI
+```bash
+npm install -g wrangler
+```
+
+2. 登录 Cloudflare
+```bash
+wrangler login
+```
+
+3. 部署项目
+```bash
+npm run deploy
+```
+
+### 环境配置
+
+在 `wrangler.toml` 中配置：
+- `name`: 你的项目名称
+- `compatibility_date`: Workers 兼容性日期
+- KV 命名空间用于存储收藏数据
+
+## 🔧 项目结构
+
+```
+convert_to_pinyin/
+├── public/
+│   └── vite.svg          # 项目图标
+├── src/
+│   ├── App.svelte        # 主应用组件
+│   ├── main.js           # 入口文件
+│   ├── app.css           # 全局样式
+│   └── lib/              # 组件库
+│       ├── Header.svelte
+│       ├── InputSection.svelte
+│       ├── Options.svelte
+│       ├── Controls.svelte
+│       ├── OutputSection.svelte
+│       ├── FavoritesSection.svelte
+│       └── Toast.svelte
+├── functions/
+│   └── api/
+│       └── favorites.js  # 收藏功能 API
+├── worker.js             # Cloudflare Worker
+├── package.json
+├── vite.config.js
+├── svelte.config.js
+└── wrangler.toml
+```
+
+## 🤝 贡献
+
+欢迎提交 Issue 和 Pull Request！
+
+### 开发指南
+
+1. Fork 本仓库
+2. 创建你的功能分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交你的修改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 开启一个 Pull Request
+
+## 📝 许可证
+
+本项目基于 MIT 许可证开源 - 查看 [LICENSE](LICENSE) 文件了解详情
+
+## 🙏 致谢
+
+- [pinyin-pro](https://github.com/zh-lx/pinyin-pro) - 强大的中文转拼音库
+- [Svelte](https://svelte.dev/) - 优秀的前端框架
+- [Cloudflare Workers](https://workers.cloudflare.com/) - 边缘计算平台
+
