@@ -70,6 +70,9 @@ async function handleFavoritesAPI(request, env) {
 // 导入 Workers Sites 的资源处理器
 import { getAssetFromKV } from '@cloudflare/kv-asset-handler';
 
+// 声明全局变量
+/* global ASSET_MANIFEST */
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -81,6 +84,9 @@ export default {
     
     // 处理静态资源
     try {
+      // 检查是否有 ASSET_MANIFEST
+      const assetManifest = typeof ASSET_MANIFEST !== 'undefined' ? JSON.parse(ASSET_MANIFEST) : {};
+      
       return await getAssetFromKV(
         {
           request,
@@ -88,18 +94,21 @@ export default {
         },
         {
           ASSET_NAMESPACE: env.__STATIC_CONTENT,
-          ASSET_MANIFEST: JSON.parse(ASSET_MANIFEST),
+          ASSET_MANIFEST: assetManifest,
         }
       );
     } catch (e) {
       // 如果不是404错误，返回错误
       if (!e.status || e.status !== 404) {
+        console.error('Error loading asset:', e);
         return new Response('Error loading resource', { status: 500 });
       }
     }
 
     // 404处理 - 返回 index.html (用于SPA路由)
     try {
+      const assetManifest = typeof ASSET_MANIFEST !== 'undefined' ? JSON.parse(ASSET_MANIFEST) : {};
+      
       const notFoundResponse = await getAssetFromKV(
         {
           request: new Request(new URL('/index.html', request.url).toString()),
@@ -107,7 +116,7 @@ export default {
         },
         {
           ASSET_NAMESPACE: env.__STATIC_CONTENT,
-          ASSET_MANIFEST: JSON.parse(ASSET_MANIFEST),
+          ASSET_MANIFEST: assetManifest,
         }
       );
       return new Response(notFoundResponse.body, {
@@ -115,6 +124,7 @@ export default {
         status: 200,
       });
     } catch (e) {
+      console.error('Error loading index.html:', e);
       return new Response('Not Found', { status: 404 });
     }
   }
