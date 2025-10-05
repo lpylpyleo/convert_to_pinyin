@@ -1,26 +1,3 @@
-// Worker 入口文件
-// 由于 Workers 不直接支持 HTML 导入，我们需要将 HTML 作为字符串导入
-import htmlContent from './index.html';
-
-export default {
-  async fetch(request, env, ctx) {
-    const url = new URL(request.url);
-    
-    // 处理 API 路由
-    if (url.pathname.startsWith('/api/favorites')) {
-      return handleFavoritesAPI(request, env);
-    }
-    
-    // 返回 HTML 页面
-    return new Response(htmlContent, {
-      headers: {
-        'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'public, max-age=3600'
-      }
-    });
-  }
-};
-
 // 处理收藏夹 API
 async function handleFavoritesAPI(request, env) {
   const url = new URL(request.url);
@@ -29,8 +6,6 @@ async function handleFavoritesAPI(request, env) {
   if (!userId) {
     return new Response("Missing ID", { status: 400 });
   }
-
-  console.log(`Received request for userId: ${userId}, method: ${request.method}`);
 
   async function getFavorites() {
     try {
@@ -91,3 +66,56 @@ async function handleFavoritesAPI(request, env) {
     return new Response("Internal Server Error", { status: 500 });
   }
 }
+
+// 导入 Workers Sites 的资源处理器
+import { getAssetFromKV } from '@cloudflare/kv-asset-handler';
+
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    
+    // 处理 API 路由
+    if (url.pathname.startsWith('/api/favorites')) {
+      return handleFavoritesAPI(request, env);
+    }
+    
+    // 处理静态资源
+    try {
+      return await getAssetFromKV(
+        {
+          request,
+          waitUntil: ctx.waitUntil.bind(ctx),
+        },
+        {
+          ASSET_NAMESPACE: env.__STATIC_CONTENT,
+          ASSET_MANIFEST: JSON.parse(ASSET_MANIFEST),
+        }
+      );
+    } catch (e) {
+      // 如果不是404错误，返回错误
+      if (!e.status || e.status !== 404) {
+        return new Response('Error loading resource', { status: 500 });
+      }
+    }
+
+    // 404处理 - 返回 index.html (用于SPA路由)
+    try {
+      const notFoundResponse = await getAssetFromKV(
+        {
+          request: new Request(new URL('/index.html', request.url).toString()),
+          waitUntil: ctx.waitUntil.bind(ctx),
+        },
+        {
+          ASSET_NAMESPACE: env.__STATIC_CONTENT,
+          ASSET_MANIFEST: JSON.parse(ASSET_MANIFEST),
+        }
+      );
+      return new Response(notFoundResponse.body, {
+        ...notFoundResponse,
+        status: 200,
+      });
+    } catch (e) {
+      return new Response('Not Found', { status: 404 });
+    }
+  }
+};
