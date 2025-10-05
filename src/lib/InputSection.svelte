@@ -12,11 +12,12 @@
 </script>
 
 <div class="input-section">
-  <label class="input-label">
+  <label for="chinese-input" class="input-label">
     输入中文文本
     <span class="char-count">{charCount} 字符</span>
   </label>
   <textarea 
+    id="chinese-input"
     bind:value
     on:input={handleInput}
     placeholder="例如：你好，世界！"

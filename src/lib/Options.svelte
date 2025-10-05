@@ -7,7 +7,7 @@
 <div class="options">
   <div class="options-row">
     <div class="option-group">
-      <label>音调格式：</label>
+      <span class="option-label">音调格式：</span>
       <label>
         <input type="radio" bind:group={toneType} value="mark"> 符号
       </label>
@@ -71,9 +71,10 @@
     gap: 16px;
   }
 
-  .option-group > label:first-child {
+  .option-label {
     font-weight: 600;
     color: var(--primary);
+    font-size: 15px;
   }
 
   .option-group label {

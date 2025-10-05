@@ -12,6 +12,13 @@
   function removeItem(text) {
     dispatch('remove', text);
   }
+  
+  function handleKeydown(event, text) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      loadItem(text);
+    }
+  }
 </script>
 
 <div class="favorites-section">
@@ -24,7 +31,13 @@
       <div class="empty-favorites">暂无收藏内容</div>
     {:else}
       {#each favorites.slice(0, 50) as text}
-        <div class="favorite-item" on:click={() => loadItem(text)}>
+        <div 
+          class="favorite-item" 
+          role="button"
+          tabindex="0"
+          on:click={() => loadItem(text)}
+          on:keydown={(event) => handleKeydown(event, text)}
+        >
           <div class="favorite-text">{text}</div>
           <button 
             class="delete-btn" 
@@ -95,10 +108,17 @@
     cursor: pointer;
   }
 
-  .favorite-item:hover {
+  .favorite-item:hover,
+  .favorite-item:focus {
     border-color: var(--primary);
     transform: translateX(4px);
     box-shadow: 0 4px 20px var(--shadow);
+    outline: none;
+  }
+
+  .favorite-item:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 2px;
   }
 
   .favorite-text {
