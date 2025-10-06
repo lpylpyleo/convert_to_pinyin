@@ -8,6 +8,7 @@
   import OutputSection from './lib/OutputSection.svelte';
   import FavoritesSection from './lib/FavoritesSection.svelte';
   import Toast from './lib/Toast.svelte';
+  import ConfirmDialog from './lib/ConfirmDialog.svelte';
 
   // 状态管理
   let inputText = '';
@@ -18,6 +19,8 @@
   let showToast = false;
   let favorites = [];
   let debounceTimer;
+  let showConfirmDialog = false;
+  let pendingDeleteText = '';
 
   // 选项状态
   let toneType = 'mark';
@@ -156,15 +159,21 @@
     }
   }
 
-  // 删除收藏
-  async function removeFavorite(text) {
-    if (!userId) return;
+  // 显示删除确认弹窗
+  function showDeleteConfirm(text) {
+    pendingDeleteText = text;
+    showConfirmDialog = true;
+  }
+
+  // 确认删除收藏
+  async function confirmRemoveFavorite() {
+    if (!userId || !pendingDeleteText) return;
 
     try {
       const res = await fetch(`/api/favorites?id=${userId}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text })
+        body: JSON.stringify({ text: pendingDeleteText })
       });
 
       if (!res.ok) {
@@ -177,7 +186,15 @@
     } catch (error) {
       console.error('Error removing favorite:', error);
       showToastMessage('删除失败');
+    } finally {
+      pendingDeleteText = '';
     }
+  }
+
+  // 取消删除
+  function cancelRemoveFavorite() {
+    pendingDeleteText = '';
+    showConfirmDialog = false;
   }
 
   // 加载收藏
@@ -231,12 +248,18 @@
     <FavoritesSection
       {favorites}
       on:load={e => loadFavorite(e.detail)}
-      on:remove={e => removeFavorite(e.detail)}
+      on:remove={e => showDeleteConfirm(e.detail)}
     />
   </div>
 </div>
 
 <Toast bind:show={showToast} message={toastMessage} />
+
+<ConfirmDialog
+  bind:show={showConfirmDialog}
+  on:confirm={confirmRemoveFavorite}
+  on:cancel={cancelRemoveFavorite}
+/>
 
 <style>
   :global(body) {
